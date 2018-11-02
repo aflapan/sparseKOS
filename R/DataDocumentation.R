@@ -1,0 +1,14 @@
+#' Predictor variables for training Data in example simulation
+#'
+#' The first two features satisfy sqrt(x_{i1}^2 + x_{i2}^2) > 2/3 if the ith sample is in class 1, and sqrt(x_{i1}^2 + x_{i2}^2) < 2/3 - 1/10 if the ith sample is in class 2. We generate 300 samples with each feature from the uniform distribution on [-1,1] and only leave samples that satisfy one of the class requirements (n ~ 270). The remaining two features are generated as independent gaussian noise variables, x_{ij} ~  N(0, 1/2) for j=3,4 and all samples i.
+#' @format A data frame with 273 rows and 4 variables:
+#' \describe{
+#'   \item{Feature 1}{Needed for classification. Genereated from a Uniform distribution on [-1,1].}
+#'   \item{Feature 2}{Needed for classification. Generated from a Uniform distribution on [-1,1].}
+#'   \item{Noise 1}{Not needed for classification. N(0,1/2) gaussian noise variable.}
+#'   \item{Noise 2}{Not needed for classification. N(0,1/2) gaussian noise variable.}
+#'   ...
+#' }
+#' @source [Lapanowski and Gaynanova, 2019] simulated data. Simulation model 1.
+#' @references [Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', (to appear)
+"Data"
