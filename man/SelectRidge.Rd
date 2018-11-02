@@ -19,8 +19,16 @@ SelectRidge(Data, Cat, Sigma, Epsilon = 1e-05)
 \item{Gamma}{Ridge parameter.}
 }
 \description{
-An automatic ridge parameter selection method. Uses the stabilization technique presented in [Lapanowski and Gaynanova, 2019].
+An automatic ridge parameter selection method. Uses the stabilization technique presented in [Lapanowski and Gaynanova, preprint] which is modified from [Lancewicki, 2017]. Uses the Gaussian kernel.
+}
+\examples{
+Sigma <- 1.325386  #Set parameter value equal to result of SelectParam.
+SelectRidge(Data = Data$TrainData , 
+            Cat = Data$CatTrain , 
+            Sigma = Sigma)
 }
 \references{
-[Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis Via Optimal Scoring'', to appear
+Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', (preprint)
+
+Lancewicki, Tomer. "Regularization of the kernel matrix via covariance matrix shrinkage estimation." arXiv preprint arXiv:1707.06156 (2017).
 }

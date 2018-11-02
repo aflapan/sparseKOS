@@ -77,41 +77,57 @@ Categorize <- function(x) {
 
 #' @export
 #' @title Computes projection value.
-#' @param x (p x 1) Data point which we compute the projection value of.
-#' @param Data (n x p) Matrix of training data with numeric features. Cannot have missing values.
+#' @param X (m x p) Matrix of unlabelled data with numeric features. This function computes the projection value of each data point in X.
+#' @param Data (n x p) Matrix of training data with numeric features. Cannot have missing values.  
 #' @param Cat (n x 1) Vector of class membership. Values must be either 1 or 2.
-#' @param Dvec (n x 1) Discrimiant coefficients vector.  
-#' @param K (n x n) Kernel matrix. 
+#' @param Dvec (n x 1) Discrimiant coefficients vector. Default set to NULL. The user can supply Dvec, but it is recommended to allow GetProjection to automatically generate it.  
+#' @param Kw (n x n) Weighted Gaussian kernel matrix. Default set to NULL. The user can supply Kw, but it is recommended to allow GetProjection to automatically generate it.
 #' @param w (p x 1) Vector of weights for each data variable. Each coordinate must lie between -1 and 1. Default value are all 1s. 
-#' @param Sigma Gaussian kernel parameter. Must be > 0. 
-#' @description Produces the centered projection value of x onto the discrimiant function determined by A.
-#' @details Produces the centered projection value of x onto the discrimiant function determined by A. Let K(X,x) be the (n x 1) vector with i-th coordinate k(x_i, x) for training data x_1, ..., x_n, and let C be the (n x n) centering matrix C=I-(1/n) 1 1^T . The projection value is P(x)=(K(X,x)^T-(1/n)  1^T K)CA. It is presented in equation (6) of [Lapanowski and Gaynanova, 2019].
-#' @references [Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis Via Optimal Scoring'', to appear
-#' @return \item{PV}{ Projection value of x.} 
+#' @param Sigma Gaussian kernel parameter. Must be > 0. Default set to NULL. Function runs SelectParam if user-supplied value is not given.
+#' @param Gamma Ridge parameter. Must be > 0, and default set to NULL. Function runs SelectParam if user-supplied value is not given.
+#' @description Produces the centered projection value of x onto the discrimiant function determined by Dvec.
+#' @details Produces the centered projection values of every point in X onto the discrimiant function determined by Dvec. Let K(X,x) be the (n x 1) vector with i-th coordinate k(x_i, x) for training data x_1, ..., x_n, and let C be the (n x n) centering matrix C=I-(1/n) 1 1^T . The projection value is P(x)=(K(X,x)^T-(1/n)  1^T K)CA. It is presented in equation (6) of [Lapanowski and Gaynanova, preprint].
+#' @references Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', preprint.
+#' @return \item{PV}{ Projection value of x.}
+#' @examples 
+#' Sigma <- 1.325386 #Set parameter values equal to result of SelectParam.
+#' Gamma <- 0.07531579 #Speeds up example.
+#' GetProjection(X = Data$TestData , 
+#'               Data = Data$TrainData , 
+#'               Cat = Data$CatTrain , 
+#'               Sigma = 1.325386 , 
+#'               Gamma = 0.07531579)
 # Computes the projection value of a point x onto discriminant vector A.  A is
 # formed from the data, and x needs to be centered by the mean of the data.  x is a
 # vector of length p.  Data is (n x p), K is (n x n) kernel matrix, SigmaPV is Gaussian
 # kernel parameter
-GetProjection <- function(x, Data, Cat, Dvec=NULL, Kw=NULL, w=rep(1, ncol(Data)), Sigma=NULL) {
-  if(is.null(Dvec)|| is.null(K) || is.null(Sigma)){
+GetProjection <- function(X, Data, Cat, Dvec=NULL, Kw=NULL, w=rep(1, ncol(Data)), Sigma=NULL , Gamma = NULL) {
+  if( any(w > 1) || any(w < -1)) stop("Some weight vector is outside the interval [-1,1]")
+  if( is.null(Sigma) || is.null(Gamma)){
     output <- SelectParams(Data, Cat)
     Gamma <- output$Gamma
     Sigma <- output$Sigma
-    Kw<- KwMat(Data, w, Sigma)
-    Y <- IndicatMat(Cat)$Categorical
-    Theta <- OptScores(Cat)
-    YTheta <- Y %*% Theta
-    Dvec <- SolveKOSCPP(YTheta,Kw,Gamma)
   }
+  Kw<- KwMat(Data, w, Sigma)
+  Y <- IndicatMat(Cat)$Categorical
+  Theta <- OptScores(Cat)
+  YTheta <- Y %*% Theta
+  Dvec <- SolveKOSCPP(YTheta,Kw,Gamma)
+  
   if(Sigma <= 0 ) stop('Gaussian kernel parameter <= 0.')
   Data <- t( t(Data) * w)
-  x<- w * x
+  X <- as.matrix(X)
+  if(ncol(X) != ncol(Data)) X <- t(X)
+  X<- t( t(X) * w)
   n <- nrow(K)
-  Kx <- t(Kernel(x, Data, Sigma))  # Kernel evalutations of x and each vector in Data
-  M1 <- colMeans(Kw)  #Create centered vector to shift Kx by
-  Dvec <- scale(Dvec, center = TRUE, scale = FALSE)
-  PV <- ( Kx - M1 ) %*% Dvec
-  PV<-as.numeric(PV)
+  PV<-apply(X, MARGIN = 1, FUN = function(z){
+    Kx <- t(Kernel(z, Data, Sigma))  # Kernel evalutations of x and each vector in Data
+    M1 <- colMeans(Kw)  #Create centered vector to shift Kx by
+    Dvec <- scale(Dvec, center = TRUE, scale = FALSE)
+    P <- ( Kx - M1 ) %*% Dvec
+    P<-as.numeric(P)
+    P
+  })
   return(PV)
 }
 
@@ -163,13 +179,25 @@ FormQB <- function(Data, A, YTheta, w, GammaQB, SigmaQB) {
 #' @param w0 (p x 1) Vector of initial weights for each data variable. Each coordinate must lie between -1 and 1. Default value are all 1s. 
 #' @param Sigma Scalar Gaussian kernel parameter. Must be > 0.
 #' @param Gamma Scalar ridge parameter used in kernel optimal scoring. Must be > 0.
-#' @param Lambda Scalar sparsity parameter on weight vector. Must be >= 0. When Lambda = 0, SparseKOS defaults to kernel optimal scoring of [Lpanowski and Gaynanova, 2019] without sparse feature selection.
-#' @param Maxniter Maximum number of iterations allowed.
+#' @param Lambda Scalar sparsity parameter on weight vector. Must be >= 0. When Lambda = 0, SparseKOS defaults to kernel optimal scoring of [Lapanowski and Gaynanova, preprint] without sparse feature selection.
+#' @param Maxniter Maximum number of iterations allowed. Default value is 100.
 #' @param Epsilon Numerical stability constant with default value 1e-05. Must be > 0, and is typically chosen to be small.
 #' @param Error Scalar which determines convergence of sparse kernel optimal scoring. 
-#' @references [Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis Via Optimal Scoring'', to appear
-#' @details A non-linear binary classifier with simultaneous sparse feature selection. Implements sparse kernel optimal scoring from [Lapanowski and Gaynanova, 2019]. Alternates between solving a kernel ridge regression problem within an optimal scoring framework and solving a Lasso problem with respect to a weight vector applied to the data features. The algorithm has three parameters: a kernel, ridge, and sparsity parameter with specifications detailed in the parameter documentation. If the user does not supply parameter values, the algorithm uses automatic parameter generation methods of the function SelectParams and which are presented in [Lapanowski and Gaynanova, 2019].
-#' @description Implementation of sparse kernel optimal scoring from [Lapanowski and Gaynanova, 2019]
+#' @references Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', preprint.
+#' @details A non-linear binary classifier with simultaneous sparse feature selection. Alternates between solving a kernel ridge regression problem within an optimal scoring framework and solving a Lasso problem on the data features.
+#' Uses the Gaussian kernel. 
+#' The algorithm has three parameters: a kernel, ridge, and sparsity parameter with specifications detailed in the parameter documentation. 
+#' @description Implementation of sparse kernel optimal scoring from [Lapanowski and Gaynanova, preprint].
+#' @examples 
+#' Sigma <- 1.325386  #Set parameter values equal to result of SelectParam.
+#' Gamma <- 0.07531579 
+#' Lambda <- 0.002855275
+#' output <- SparseKernOptScore(Data = Data$TrainData,
+#'                              Cat = Data$CatTrain,
+#'                              Lambda = Lambda,
+#'                              Gamma = Gamma,
+#'                              Sigma = Sigma)
+#' print(output)
 #' @export
 #' @return A list of
 #'  \item{Dvec}{ (n x 1) Discrimiant coefficients vector.}
@@ -187,8 +215,15 @@ SparseKernOptScore <- function(Data, Cat, w0=rep(1, ncol(Data)), Lambda, Gamma, 
 
   Opt_Scores <- OptScores(Cat)
   YTheta <- Y %*% Opt_Scores
-
+  
   Kw <- KwMat(Data, w0,  Sigma)
+  
+  if(Lambda == 0){
+    Dvec <- SolveKOSCPP(YTheta, Kw, Gamma)
+    return(list(Weights = w0, Dvec = Dvec))
+  }
+
+
 
   # Create Initial Discrimiant Vector and Quadratic Form Terms#
   Aold <- sparseKOS::SolveKOSCPP(YTheta, Kw, Gamma, Epsilon)
@@ -261,8 +296,16 @@ SparseKernOptScore <- function(Data, Cat, w0=rep(1, ncol(Data)), Lambda, Gamma, 
 #' @param Cat (n x 1) Vector of class membership. Values must be either 1 or 2.
 #' @param Sigma Gaussian kernel parameter. Must be > 0.
 #' @param Epsilon Numerical stability constant with default value 1e-05. Must be > 0 and is typically chosen to be small.
-#' @references [Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis Via Optimal Scoring'', to appear
-#' @description An automatic ridge parameter selection method. Uses the stabilization technique presented in [Lapanowski and Gaynanova, 2019].
+#' @references 
+#' Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', (preprint)
+#' @references 
+#' Lancewicki, Tomer. "Regularization of the kernel matrix via covariance matrix shrinkage estimation." arXiv preprint arXiv:1707.06156 (2017).
+#' @examples 
+#' Sigma <- 1.325386  #Set parameter value equal to result of SelectParam.
+#' SelectRidge(Data = Data$TrainData , 
+#'             Cat = Data$CatTrain , 
+#'             Sigma = Sigma)
+#' @description An automatic ridge parameter selection method. Uses the stabilization technique presented in [Lapanowski and Gaynanova, preprint] which is modified from [Lancewicki, 2017]. Uses the Gaussian kernel.
 #' @export
 SelectRidge <- function(Data, Cat, Sigma, Epsilon = 1e-05) {
   YTrain <- IndicatMat(Cat)$Categorical
@@ -410,10 +453,10 @@ LassoCV <- function(Data, Cat, B, Gamma, Sigma,
           A <- output$Dvec
           
           # Create projection Values
-          NewTestProjections <- apply(NewTestDataFold, MARGIN = 1, FUN = function(t) GetProjection(x=t, Data=NewTrainDataFold, Cat=NewTrainCat, Dvec=A, Kw=NewKtrain, Sigma=Sigma))
+          NewTestProjections <- GetProjection(X = NewTestDataFold, Data=NewTrainDataFold, Cat=NewTrainCat, Dvec=A, Kw=NewKtrain, Sigma = Sigma, Gamma = Gamma)
           
           ### Need test projection values for LDA
-          TrainProjections <- apply(NewTrainDataFold, MARGIN = 1, FUN = function(t) GetProjection(x=t, Data=NewTrainDataFold, Cat=NewTrainCat, Dvec=A, Kw=NewKtrain, Sigma=Sigma))
+          TrainProjections <- GetProjection(X = NewTrainDataFold, Data=NewTrainDataFold, Cat=NewTrainCat, Dvec=A, Kw=NewKtrain, Sigma = Sigma, Gamma = Gamma)
           
           ### All of this is used to create discirminant line
           OldData <- data.frame(as.numeric(NewTrainCat), as.numeric(TrainProjections))
@@ -436,17 +479,27 @@ LassoCV <- function(Data, Cat, B, Gamma, Sigma,
 }
 
 # Code to select kernel, ridge, and sparsity parameters.
-#' @title Generates the Gaussian kernel, ridge, and sparsity parameters.
+#' @title Generates parameters.
 #' @param Data (n x p) Matrix of training data with numeric features. Cannot have missing values.
 #' @param Cat (n x 1) Vector of class membership. Values must be either 1 or 2.
 #' @param Epsilon Numerical stability constant with default value 1e-05. Must be > 0 and is typically chosen to be small.
-#' @references [Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis Via Optimal Scoring'', to appear
-#' @description Generates the gaussian kernel, ridge, and sparsity parameters for use in sparse kernel optimal scoring using the methods presented in [Lapanowski and Gaynanova, 2019]. The Gaussian kernel parameter is generated using five-fold cross-validation of the misclassification error rate aross the {.05, .1, .2, .3, .5} quantiles of squared-distances between groups. The ridge parameter is generated using a stabilization technique. The sparsity parameter is generated by five-fold cross-validation over a logarithmic grid of 20 values within the interval [1e-09*c, c]. The constant c= 2max(|b|), where b is the vector of the linear term in a quadratic form. This interval is automatically generated. See [Lapanowski and Gaynanova, 2019] for more details.
+#' @references 
+#' Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', (preprint)
+#' @references 
+#' Lancewicki, Tomer. "Regularization of the kernel matrix via covariance matrix shrinkage estimation." arXiv preprint arXiv:1707.06156 (2017).
+#' @description Generates parameters to be used in sparse kernel optimal scoring.
+#' @details Generates the gaussian kernel, ridge, and sparsity parameters for use in sparse kernel optimal scoring using the methods presented in [Lapanowski and Gaynanova, preprint]. 
+#' The Gaussian kernel parameter is generated using five-fold cross-validation of the misclassification error rate aross the {.05, .1, .2, .3, .5} quantiles of squared-distances between groups. 
+#' The ridge parameter is generated using a stabilization technique developed in [Lapanowski and Gaynanova, preprint].
+#' The sparsity parameter is generated by five-fold cross-validation over a logarithmic grid of 20 values in an automatically-generated interval.
 #' @export
 #' @return A list of 
 #' \item{Sigma}{ Gaussian kernel parameter.}  
 #' \item{Gamma}{ Ridge Parameter.}
 #' \item{Lambda}{ Sparsity parameter.}
+#' @examples 
+#' Parameters <- SelectParams(Data = Data$TrainData , Cat = Data$CatTrain)
+#' print(Parameters)
 SelectParams <- function(Data, Cat, Epsilon = 1e-05) {
   E <- matrix(0, nrow = 5, ncol = 4)
   QuantileTest <- c(0.05, 0.1, 0.2, 0.3,.5)

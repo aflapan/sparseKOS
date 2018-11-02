@@ -9,12 +9,12 @@ SoftThreshCPP <- function(x, lambda) {
     .Call(`_sparseKOS_SoftThreshCPP`, x, lambda)
 }
 
-CoordDesCPP <- function(w0, Q, beta, lambda, epsln, maxniter = 1.0e7) {
-    .Call(`_sparseKOS_CoordDesCPP`, w0, Q, beta, lambda, epsln, maxniter)
+CoordDesCPP <- function(w0, Q, beta, Lambda, Epsilon, Maxniter = 1.0e7) {
+    .Call(`_sparseKOS_CoordDesCPP`, w0, Q, beta, Lambda, Epsilon, Maxniter)
 }
 
-SolveKOSCPP <- function(YTheta, K, gammaKOS, epsilonKOS = 1e-5) {
-    .Call(`_sparseKOS_SolveKOSCPP`, YTheta, K, gammaKOS, epsilonKOS)
+SolveKOSCPP <- function(YTheta, K, Gamma, Epsilon = 1e-5) {
+    .Call(`_sparseKOS_SolveKOSCPP`, YTheta, K, Gamma, Epsilon)
 }
 
 DerivCPP <- function(x, Data, w0, sigmaD) {
@@ -25,7 +25,7 @@ TMatCPP <- function(Data, A, w0, sigmaTm) {
     .Call(`_sparseKOS_TMatCPP`, Data, A, w0, sigmaTm)
 }
 
-ObjectiveFuncCPP <- function(w, KwOF, Data, DVectors, YTheta, lambdaOF, gammaOF, epsilonOF = 1e-5) {
-    .Call(`_sparseKOS_ObjectiveFuncCPP`, w, KwOF, Data, DVectors, YTheta, lambdaOF, gammaOF, epsilonOF)
+ObjectiveFuncCPP <- function(w, KwOF, Data, DVectors, YTheta, LambdaOF, GammaOF, EpsilonOF = 1e-5) {
+    .Call(`_sparseKOS_ObjectiveFuncCPP`, w, KwOF, Data, DVectors, YTheta, LambdaOF, GammaOF, EpsilonOF)
 }
 

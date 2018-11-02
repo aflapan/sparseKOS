@@ -30,32 +30,32 @@ BEGIN_RCPP
 END_RCPP
 }
 // CoordDesCPP
-arma::Col<double> CoordDesCPP(arma::Col<double> w0, arma::Mat<double> Q, arma::Col<double> beta, double lambda, double epsln, int maxniter);
-RcppExport SEXP _sparseKOS_CoordDesCPP(SEXP w0SEXP, SEXP QSEXP, SEXP betaSEXP, SEXP lambdaSEXP, SEXP epslnSEXP, SEXP maxniterSEXP) {
+arma::Col<double> CoordDesCPP(arma::Col<double> w0, arma::Mat<double> Q, arma::Col<double> beta, double Lambda, double Epsilon, int Maxniter);
+RcppExport SEXP _sparseKOS_CoordDesCPP(SEXP w0SEXP, SEXP QSEXP, SEXP betaSEXP, SEXP LambdaSEXP, SEXP EpsilonSEXP, SEXP MaxniterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::Col<double> >::type w0(w0SEXP);
     Rcpp::traits::input_parameter< arma::Mat<double> >::type Q(QSEXP);
     Rcpp::traits::input_parameter< arma::Col<double> >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< double >::type epsln(epslnSEXP);
-    Rcpp::traits::input_parameter< int >::type maxniter(maxniterSEXP);
-    rcpp_result_gen = Rcpp::wrap(CoordDesCPP(w0, Q, beta, lambda, epsln, maxniter));
+    Rcpp::traits::input_parameter< double >::type Lambda(LambdaSEXP);
+    Rcpp::traits::input_parameter< double >::type Epsilon(EpsilonSEXP);
+    Rcpp::traits::input_parameter< int >::type Maxniter(MaxniterSEXP);
+    rcpp_result_gen = Rcpp::wrap(CoordDesCPP(w0, Q, beta, Lambda, Epsilon, Maxniter));
     return rcpp_result_gen;
 END_RCPP
 }
 // SolveKOSCPP
-arma::Col<double> SolveKOSCPP(arma::Mat<double> YTheta, arma::Mat<double> K, double gammaKOS, double epsilonKOS);
-RcppExport SEXP _sparseKOS_SolveKOSCPP(SEXP YThetaSEXP, SEXP KSEXP, SEXP gammaKOSSEXP, SEXP epsilonKOSSEXP) {
+arma::Col<double> SolveKOSCPP(arma::Mat<double> YTheta, arma::Mat<double> K, double Gamma, double Epsilon);
+RcppExport SEXP _sparseKOS_SolveKOSCPP(SEXP YThetaSEXP, SEXP KSEXP, SEXP GammaSEXP, SEXP EpsilonSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::Mat<double> >::type YTheta(YThetaSEXP);
     Rcpp::traits::input_parameter< arma::Mat<double> >::type K(KSEXP);
-    Rcpp::traits::input_parameter< double >::type gammaKOS(gammaKOSSEXP);
-    Rcpp::traits::input_parameter< double >::type epsilonKOS(epsilonKOSSEXP);
-    rcpp_result_gen = Rcpp::wrap(SolveKOSCPP(YTheta, K, gammaKOS, epsilonKOS));
+    Rcpp::traits::input_parameter< double >::type Gamma(GammaSEXP);
+    Rcpp::traits::input_parameter< double >::type Epsilon(EpsilonSEXP);
+    rcpp_result_gen = Rcpp::wrap(SolveKOSCPP(YTheta, K, Gamma, Epsilon));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -88,8 +88,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ObjectiveFuncCPP
-double ObjectiveFuncCPP(arma::Col<double> w, arma::Mat<double> KwOF, arma::Mat<double> Data, arma::Col<double> DVectors, arma::Mat<double> YTheta, double lambdaOF, double gammaOF, double epsilonOF);
-RcppExport SEXP _sparseKOS_ObjectiveFuncCPP(SEXP wSEXP, SEXP KwOFSEXP, SEXP DataSEXP, SEXP DVectorsSEXP, SEXP YThetaSEXP, SEXP lambdaOFSEXP, SEXP gammaOFSEXP, SEXP epsilonOFSEXP) {
+double ObjectiveFuncCPP(arma::Col<double> w, arma::Mat<double> KwOF, arma::Mat<double> Data, arma::Col<double> DVectors, arma::Mat<double> YTheta, double LambdaOF, double GammaOF, double EpsilonOF);
+RcppExport SEXP _sparseKOS_ObjectiveFuncCPP(SEXP wSEXP, SEXP KwOFSEXP, SEXP DataSEXP, SEXP DVectorsSEXP, SEXP YThetaSEXP, SEXP LambdaOFSEXP, SEXP GammaOFSEXP, SEXP EpsilonOFSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -98,10 +98,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::Mat<double> >::type Data(DataSEXP);
     Rcpp::traits::input_parameter< arma::Col<double> >::type DVectors(DVectorsSEXP);
     Rcpp::traits::input_parameter< arma::Mat<double> >::type YTheta(YThetaSEXP);
-    Rcpp::traits::input_parameter< double >::type lambdaOF(lambdaOFSEXP);
-    Rcpp::traits::input_parameter< double >::type gammaOF(gammaOFSEXP);
-    Rcpp::traits::input_parameter< double >::type epsilonOF(epsilonOFSEXP);
-    rcpp_result_gen = Rcpp::wrap(ObjectiveFuncCPP(w, KwOF, Data, DVectors, YTheta, lambdaOF, gammaOF, epsilonOF));
+    Rcpp::traits::input_parameter< double >::type LambdaOF(LambdaOFSEXP);
+    Rcpp::traits::input_parameter< double >::type GammaOF(GammaOFSEXP);
+    Rcpp::traits::input_parameter< double >::type EpsilonOF(EpsilonOFSEXP);
+    rcpp_result_gen = Rcpp::wrap(ObjectiveFuncCPP(w, KwOF, Data, DVectors, YTheta, LambdaOF, GammaOF, EpsilonOF));
     return rcpp_result_gen;
 END_RCPP
 }

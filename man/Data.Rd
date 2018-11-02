@@ -3,25 +3,29 @@
 \docType{data}
 \name{Data}
 \alias{Data}
-\title{Predictor variables for training Data in example simulation}
-\format{A data frame with 273 rows and 4 variables:
+\title{Example Data.}
+\format{A list consisting of:
 \describe{
-  \item{Feature 1}{Needed for classification. Genereated from a Uniform distribution on [-1,1].}
-  \item{Feature 2}{Needed for classification. Generated from a Uniform distribution on [-1,1].}
-  \item{Noise 1}{Not needed for classification. N(0,1/2) gaussian noise variable.}
-  \item{Noise 2}{Not needed for classification. N(0,1/2) gaussian noise variable.}
+  \item{TrainData}{ (179 x 4) Matrix of training data features. the first two features satisfy sqrt(x_{i1}^2 + x_{i2}^2) > 2/3 if the ith sample is in class 1. 
+Otherwise, they satisfy sqrt(x_{i1}^2 + x_{i2}^2) < 2/3 - 1/10 if the ith sample is in class 2. 
+The third and fourth features are generated as independent N(0, 1/2) noise.}
+  \item{TestData}{ (94 x 4) Matrix of test data features. the first two features satisfy sqrt(x_{i1}^2 + x_{i2}^2) > 2/3 if the ith sample is in class 1. 
+Otherwise, they satisfy sqrt(x_{i1}^2 + x_{i2}^2) < 2/3 - 1/10 if the ith sample is in class 2. 
+The third and fourth features are generated as independent N(0, 1/2) noise.}
+  \item{CatTrain}{ (179 x 1) Vector of class labels for the training data.}
+  \item{CatTest}{ (94 x 1) Vector of class labels for the test data.}
   ...
 }}
 \source{
-[Lapanowski and Gaynanova, 2019] simulated data. Simulation model 1.
+Simulation model 1 from [Lapanowski and Gaynanova, preprint].
 }
 \usage{
 Data
 }
-\description{
-The first two features satisfy sqrt(x_{i1}^2 + x_{i2}^2) > 2/3 if the ith sample is in class 1, and sqrt(x_{i1}^2 + x_{i2}^2) < 2/3 - 1/10 if the ith sample is in class 2. We generate 300 samples with each feature from the uniform distribution on [-1,1] and only leave samples that satisfy one of the class requirements (n ~ 270). The remaining two features are generated as independent gaussian noise variables, x_{ij} ~  N(0, 1/2) for j=3,4 and all samples i.
+\details{
+List containing training and test data along with categorical labels for example data.
 }
 \references{
-[Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', (to appear)
+Lapanowski, Alexnader F., and Gaynanova, Irina. ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', preprint.
 }
 \keyword{datasets}

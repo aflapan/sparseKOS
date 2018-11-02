@@ -5,7 +5,7 @@
 \title{Sparse kernel optimal scoring}
 \usage{
 SparseKernOptScore(Data, Cat, w0 = rep(1, ncol(Data)), Lambda, Gamma, Sigma,
-  Maxniter, Epsilon = 1e-05, Error = 1e-05)
+  Maxniter = 100, Epsilon = 1e-05, Error = 1e-05)
 }
 \arguments{
 \item{Data}{(n x p) Matrix of training data with numeric features. Cannot have missing values.}
@@ -14,13 +14,13 @@ SparseKernOptScore(Data, Cat, w0 = rep(1, ncol(Data)), Lambda, Gamma, Sigma,
 
 \item{w0}{(p x 1) Vector of initial weights for each data variable. Each coordinate must lie between -1 and 1. Default value are all 1s.}
 
-\item{Lambda}{Scalar sparsity parameter on weight vector. Must be >= 0. When Lambda = 0, SparseKOS defaults to kernel optimal scoring of [Lpanowski and Gaynanova, 2019] without sparse feature selection.}
+\item{Lambda}{Scalar sparsity parameter on weight vector. Must be >= 0. When Lambda = 0, SparseKOS defaults to kernel optimal scoring of [Lapanowski and Gaynanova, preprint] without sparse feature selection.}
 
 \item{Gamma}{Scalar ridge parameter used in kernel optimal scoring. Must be > 0.}
 
 \item{Sigma}{Scalar Gaussian kernel parameter. Must be > 0.}
 
-\item{Maxniter}{Maximum number of iterations allowed.}
+\item{Maxniter}{Maximum number of iterations allowed. Default value is 100.}
 
 \item{Epsilon}{Numerical stability constant with default value 1e-05. Must be > 0, and is typically chosen to be small.}
 
@@ -32,11 +32,24 @@ A list of
  \item{Weights}{ (p x 1) Final weight vector.}
 }
 \description{
-Implementation of sparse kernel optimal scoring from [Lapanowski and Gaynanova, 2019]
+Implementation of sparse kernel optimal scoring from [Lapanowski and Gaynanova, preprint].
 }
 \details{
-A non-linear binary classifier with simultaneous sparse feature selection. Implements sparse kernel optimal scoring from [Lapanowski and Gaynanova, 2019]. Alternates between solving a kernel ridge regression problem within an optimal scoring framework and solving a Lasso problem with respect to a weight vector applied to the data features. The algorithm has three parameters: a kernel, ridge, and sparsity parameter with specifications detailed in the parameter documentation. If the user does not supply parameter values, the algorithm uses automatic parameter generation methods of the function SelectParams and which are presented in [Lapanowski and Gaynanova, 2019].
+A non-linear binary classifier with simultaneous sparse feature selection. Alternates between solving a kernel ridge regression problem within an optimal scoring framework and solving a Lasso problem on the data features.
+Uses the Gaussian kernel. 
+The algorithm has three parameters: a kernel, ridge, and sparsity parameter with specifications detailed in the parameter documentation.
+}
+\examples{
+Sigma <- 1.325386  #Set parameter values equal to result of SelectParam.
+Gamma <- 0.07531579 
+Lambda <- 0.002855275
+output <- SparseKernOptScore(Data = Data$TrainData,
+                             Cat = Data$CatTrain,
+                             Lambda = Lambda,
+                             Gamma = Gamma,
+                             Sigma = Sigma)
+print(output)
 }
 \references{
-[Lapanowski and Gaynanova, 2019] ``Sparse Feature Selection in Kernel Discriminant Analysis Via Optimal Scoring'', to appear
+Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', preprint.
 }
