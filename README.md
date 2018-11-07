@@ -7,21 +7,21 @@ devtools::install_github("aflapan/sparseKOS")
 ```
 # Functions
 
-The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. The user is allowed to specify the values of either `Sigma` or both `Sigma, Gamma` (see the section Hierarchical Parameters for more details). The function returns a list containing the parameter values `Sigma`, `Gamma`, and `Lambda` to be used.
+1) The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. The user is allowed to specify the values of either `Sigma` or both `Sigma, Gamma` (see the section Hierarchical Parameters for more details). The function returns a list containing the parameter values `Sigma`, `Gamma`, and `Lambda` to be used.
 
  It has implementation
 ```
 SelectParams( Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
 ```
 
-The second function is `Predict`. This function returns `Weights` on the data features and a discriminant vector `Dvec` which solve sparse kernel optimal scoring. If a value `X` is supplied, then the function uses both `Weights` and `Dvec` to predict the class membership for every data point in `X`. The user is allowed to specify parameter values `Sigma`, `Gamma`, and `Lambda`. However, the user-specified parameters must satistfy their hierarchical ordering (see the section Hierarchical Parameters for more detail). If not all of the parameters are given user-specified values, the function first runs `SelectParams` to obtain values for the remaining parameter values. 
+2) The second function is `Predict`. This function returns `Weights` on the data features and a discriminant vector `Dvec` which solve sparse kernel optimal scoring. If a value `X` is supplied, then the function uses both `Weights` and `Dvec` to predict the class membership for every data point in `X`. The user is allowed to specify parameter values `Sigma`, `Gamma`, and `Lambda`. However, the user-specified parameters must satistfy their hierarchical ordering (see the section Hierarchical Parameters for more detail). If not all of the parameters are given user-specified values, the function first runs `SelectParams` to obtain values for the remaining parameter values. 
 
  It has implementation 
 ```
 Predict( X = NULL , Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
 
-The third function is ``GetProjection``. It has the implementation
+3) The third function is ``GetProjection``. It has the implementation
 ```
 GetProjection( Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
