@@ -35,7 +35,7 @@ Middle  `Gamma`
 
 Bottom  `Lambda`
 
-When using the package `sparseKOS`, the user is only allowed to specify parameter combinations which adhere to the hierarchical ordering of the parameters. That is, they can only input parameters which go from Top to Bottom in the display above. Thus, they will be allowed to specify a value for `Sigma` but not for either `Gamma` or `Lambda`. Likewise, they are allowed to specify values for both `Sigma` and `Gamma` but not for `Lambda`. The user will NOT be allowed to specify a value for `Lambda` while leaving either `Sigma` or `Gamma` undefined. 
+When using the package `sparseKOS`, the user is only allowed to specify parameter combinations which adhere to the hierarchical ordering of the parameters above. That is, they can only input parameters which go from Top to Bottom in the display above. For example, they could secify both `Sigma` and `Gamma`, but leave `Lambda` as the default `NULL` value. The user would not be allowed to specify only `Lambda` while leaving `Sigma` and `Gamma` as their default `NULL` values.
 
 
 # Examples
