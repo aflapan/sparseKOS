@@ -14,12 +14,12 @@ SelectParams()
 
 The second function is `Predict`. It has implementation 
 ```
-Predict( X , Data, Cat, Sigma, Gamma, Lasso)
+Predict( X = NULL , Data, Cat, Sigma = NULL, Gamma = NULL, Lasso = NULL)
 ```
 
 the third function is ``GetProjection``. It has the implementation
 ```
-GetProjection()
+GetProjection( Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
 
 # Examples
