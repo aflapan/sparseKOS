@@ -57,8 +57,15 @@ SelectParams(Data = Data$TrainData,
              Sigma = 1.325386,
              Gamma = 0.07531579)
 ```
+However, the user CANNOT violate the hierarchical ordering. The exmaple
+```
+SelectParams(Data = Data$TrainData,
+             Cat = Data$CatTrain,
+             Gamma = 0.07531579)
+```
+will return with an error message. 
 
-
+We now provide examples of the `Predict` function. 
 
 For an example with pre-specified parmeter values:
 ```
