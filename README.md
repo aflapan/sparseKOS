@@ -13,7 +13,7 @@ There are two function in the package `sparseKOS`.
 SelectParams( Data, Cat, Sigma = NULL, Gamma = NULL)
 ```
 
-2) The second function is `Predict`. This function returns `Weights` on the data features and a discriminant vector `Dvec` which solve sparse kernel optimal scoring. If a value `X` is supplied, then the function uses both `Weights` and `Dvec` to predict the class membership for every data point in `X`. The user is allowed to specify parameter values `Sigma`, `Gamma`, and `Lambda`. However, the user-specified parameters must satistfy their hierarchical ordering (see the section Hierarchical Parameters for more detail). If not all of the parameters are given user-specified values, the function first runs `SelectParams` to obtain values for the remaining parameter values. It has implementation 
+2) The second function is `Predict`. This function returns a list of `Weights` on the data features and a discriminant vector `Dvec`. This list solves sparse kernel optimal scoring. If a value `X` of unlabelled data is supplied, then the function uses both `Weights` and `Dvec` to predict the class membership for every data point in `X`. The user is allowed to specify parameter values `Sigma`, `Gamma`, and `Lambda`. However, the user-specified parameters must satistfy their hierarchical ordering (see the section Hierarchical Parameters for more detail). If not all of the parameters are given user-specified values, the function first runs `SelectParams` to obtain values for the remaining parameter values. It has implementation 
 ```
 Predict( X = NULL , Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
