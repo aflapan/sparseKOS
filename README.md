@@ -18,7 +18,7 @@ SelectParams( Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
 
 The second function is `Predict`. It has implementation 
 ```
-Predict( X = NULL , Data, Cat, Sigma = NULL, Gamma = NULL, Lasso = NULL)
+Predict( X = NULL , Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
 
 The third function is ``GetProjection``. It has the implementation
