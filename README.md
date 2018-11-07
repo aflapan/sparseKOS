@@ -27,7 +27,7 @@ GetProjection( Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
 
 # Hierarchical Parameters
-Sparse kernel optimal scoring has three parameters: a Gaussian kernel parameter `Sigma`, a ridge parameter `Gamma`, and a sparaity parameter `Lambda`. They have a hierarchical dependency, in that `Sigma` influences `Gamma`, and both influence `Lambda`. the ordering is 
+Sparse kernel optimal scoring has three parameters: a Gaussian kernel parameter `Sigma`, a ridge parameter `Gamma`, and a sparaity parameter `Lambda`. They have a hierarchical dependency, in that `Sigma` influences `Gamma`, and both influence `Lambda`. The ordering is 
 
 Top     `Sigma`
 
@@ -35,7 +35,7 @@ Middle  `Gamma`
 
 Bottom  `Lambda`
 
-Thus, when using the package `sparseKOS`, the user is only allowed to specify parameter combinations which adhere to the hierarchical ordering of the parameters. That is, they can only input parameters which go from Top to Bottom in the display above. Thus, they will be allowed to specify a value for `Sigma` but not for either `Gamma` or `Lambda`. Likewise, they are allowed to specify values for both `Sigma` and `Gamma` but not for `Lambda`. The user will NOT be allowed to specify a value for `Lambda` while leaving either `Sigma` or `Gamma` undefined. 
+When using the package `sparseKOS`, the user is only allowed to specify parameter combinations which adhere to the hierarchical ordering of the parameters. That is, they can only input parameters which go from Top to Bottom in the display above. Thus, they will be allowed to specify a value for `Sigma` but not for either `Gamma` or `Lambda`. Likewise, they are allowed to specify values for both `Sigma` and `Gamma` but not for `Lambda`. The user will NOT be allowed to specify a value for `Lambda` while leaving either `Sigma` or `Gamma` undefined. 
 
 
 # Examples
