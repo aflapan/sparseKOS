@@ -9,7 +9,7 @@ devtools::install_github("aflapan/sparseKOS")
 
 There are three functions in `sparseKOS`. 
 
-The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. There are three parameters returned: a Gaussian kernel parameter `Sigma`, a ridge parameter `Gamma`, and a sparaity parameter `Lambda`. The user is allowed to specify the values of either `Sigma` or both `Sigma, Gamma`. 
+The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. The user is allowed to specify the values of either `Sigma` or both `Sigma, Gamma`. 
 
  It has implementation
 ```
@@ -26,8 +26,8 @@ The third function is ``GetProjection``. It has the implementation
 GetProjection( Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
 
-#Hierarchical Parameters
-The variables `Sigma, Gamma, Lambda` have a hierarchical dependency: `Sigma` influences `Gamma`, and both influence `Lambda`. 
+# Hierarchical Parameters
+Sparse kernel optimal scoring has three parameters: a Gaussian kernel parameter `Sigma`, a ridge parameter `Gamma`, and a sparaity parameter `Lambda`. They have a hierarchical dependency, in that `Sigma` influences `Gamma`, and both influence `Lambda`. Thus, when using the package `sparseKOS`, the user will be allowed to specify certain combinations of parameters and not be allowed to specify other combinations. The user will not be allowed to specify any combinations which violate the hierarchical ordering of the parameters. Thus, they will be allowed to specify a value for `Sigma` but not for either `Gamma` or `Lambda`. Likewise, they are allowed to specify values for both `Sigma` and `Gamma` but not for `Lambda`. The user will NOT be allowed to specify a value for `Lambda` while leaving either `Sigma` or `Gamma` undefined. 
 
 
 # Examples
