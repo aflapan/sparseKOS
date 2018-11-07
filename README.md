@@ -25,7 +25,7 @@ library(sparseKOS)
 SelectParams(Data = Data$TrainData,
              Cat = Data$CatTrain)
 ```
-
+For an example with pre-specified parmeter values:
 ```
 Sigma <- 1.325386
 Gamma <- 0.07531579
@@ -37,4 +37,11 @@ Predict( X = Data$TestData,
          Sigma = Sigma,
          Gamma = Gamma, 
          Lambda = Lambda)
+         
+Predict( Data = Data$TrainData,
+         Cat = Data$CatTrain, 
+         Sigma = Sigma,
+         Gamma = Gamma, 
+         Lambda = Lambda)
 ```
+Note that two different lists are returned in the above examples. The first example returns a list which includes the predicted class memberships for the unlabelled data in `X = Data$TestData` along with the final weights `Weights` and discriminant vector `Dvec`. The second example does not supply a value for the `X` variable and thus does not return predicted class memberships. 
