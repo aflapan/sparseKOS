@@ -4,7 +4,7 @@
 \alias{SelectParams}
 \title{Generates parameters.}
 \usage{
-SelectParams(Data, Cat, Epsilon = 1e-05)
+SelectParams(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
 }
 \arguments{
 \item{Data}{(n x p) Matrix of training data with numeric features. Cannot have missing values.}

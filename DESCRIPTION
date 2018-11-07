@@ -7,10 +7,11 @@ Author: Alexander F. Lapanowski and Irina Gaynanova
 Maintainer: Alexander F. Lapanowski <aflapan@gmail.com>
 Description: A package for non-linear binary classification with simultaneous sparse feature selection. This package implements an algorithm developed in [Lapanowski and Gaynanova, preprint] called sparse kernel optimal scoring (sparse KOS). It combines kernel discriminant analysis with sparse feature selection. The kernel discriminant analysis is done through a kernelized version of regularized optimal scoring, which is a regression-type problem. This package uses the Gaussian kernel. Sparse feature selection is accomplished by placing a weight lying in [-1,1] on each data feature, and then including a sparsity penalty on the weight vector. Sparse KOS alternates between solving the kernelized optimal scoring problem and minimzing a LASSO-type problem on a feature weight vector. This package also implements automatic kernel, ridge, and sparsity parameter selection methods. 
 License: GPL-3
-Imports: Rcpp (>= 0.12.16), MASS, emdbook, fields
-Depends: MASS, emdbook, fields
+Imports: Rcpp (>= 0.12.16), MASS, emdbook, fields, ggplot2
+Depends: 
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
 LazyData: true
 NeedsCompilation: yes
 Packaged: 2018-11-02 01:59:51 UTC; aflap
+Suggests: testthat

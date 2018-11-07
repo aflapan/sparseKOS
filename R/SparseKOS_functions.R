@@ -75,32 +75,7 @@ Categorize <- function(x) {
   c
 }
 
-#' @export
-#' @title Computes projection value.
-#' @param X (m x p) Matrix of unlabelled data with numeric features. This function computes the projection value of each data point in X.
-#' @param Data (n x p) Matrix of training data with numeric features. Cannot have missing values.  
-#' @param Cat (n x 1) Vector of class membership. Values must be either 1 or 2.
-#' @param Dvec (n x 1) Discrimiant coefficients vector. Default set to NULL. The user can supply Dvec, but it is recommended to allow GetProjection to automatically generate it.  
-#' @param Kw (n x n) Weighted Gaussian kernel matrix. Default set to NULL. The user can supply Kw, but it is recommended to allow GetProjection to automatically generate it.
-#' @param w (p x 1) Vector of weights for each data variable. Each coordinate must lie between -1 and 1. Default value are all 1s. 
-#' @param Sigma Gaussian kernel parameter. Must be > 0. Default set to NULL. Function runs SelectParam if user-supplied value is not given.
-#' @param Gamma Ridge parameter. Must be > 0, and default set to NULL. Function runs SelectParam if user-supplied value is not given.
-#' @description Produces the centered projection value of x onto the discrimiant function determined by Dvec.
-#' @details Produces the centered projection values of every point in X onto the discrimiant function determined by Dvec. Let K(X,x) be the (n x 1) vector with i-th coordinate k(x_i, x) for training data x_1, ..., x_n, and let C be the (n x n) centering matrix C=I-(1/n) 1 1^T . The projection value is P(x)=(K(X,x)^T-(1/n)  1^T K)CA. It is presented in equation (6) of [Lapanowski and Gaynanova, preprint].
-#' @references Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', preprint.
-#' @return \item{PV}{ Projection value of x.}
-#' @examples 
-#' Sigma <- 1.325386 #Set parameter values equal to result of SelectParam.
-#' Gamma <- 0.07531579 #Speeds up example.
-#' GetProjection(X = Data$TestData , 
-#'               Data = Data$TrainData , 
-#'               Cat = Data$CatTrain , 
-#'               Sigma = 1.325386 , 
-#'               Gamma = 0.07531579)
-# Computes the projection value of a point x onto discriminant vector A.  A is
-# formed from the data, and x needs to be centered by the mean of the data.  x is a
-# vector of length p.  Data is (n x p), K is (n x n) kernel matrix, SigmaPV is Gaussian
-# kernel parameter
+
 GetProjection <- function(X, Data, Cat, Dvec=NULL, Kw=NULL, w=rep(1, ncol(Data)), Sigma=NULL , Gamma = NULL) {
   if( any(w > 1) || any(w < -1)) stop("Some weight vector is outside the interval [-1,1]")
   if( is.null(Sigma) || is.null(Gamma)){
@@ -173,35 +148,6 @@ FormQB <- function(Data, A, YTheta, w, GammaQB, SigmaQB) {
 }
 
 
-#' @title Sparse kernel optimal scoring
-#' @param Data (n x p) Matrix of training data with numeric features. Cannot have missing values.
-#' @param Cat (n x 1) Vector of class membership. Values must be either 1 or 2.
-#' @param w0 (p x 1) Vector of initial weights for each data variable. Each coordinate must lie between -1 and 1. Default value are all 1s. 
-#' @param Sigma Scalar Gaussian kernel parameter. Must be > 0.
-#' @param Gamma Scalar ridge parameter used in kernel optimal scoring. Must be > 0.
-#' @param Lambda Scalar sparsity parameter on weight vector. Must be >= 0. When Lambda = 0, SparseKOS defaults to kernel optimal scoring of [Lapanowski and Gaynanova, preprint] without sparse feature selection.
-#' @param Maxniter Maximum number of iterations allowed. Default value is 100.
-#' @param Epsilon Numerical stability constant with default value 1e-05. Must be > 0, and is typically chosen to be small.
-#' @param Error Scalar which determines convergence of sparse kernel optimal scoring. 
-#' @references Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', preprint.
-#' @details A non-linear binary classifier with simultaneous sparse feature selection. Alternates between solving a kernel ridge regression problem within an optimal scoring framework and solving a Lasso problem on the data features.
-#' Uses the Gaussian kernel. 
-#' The algorithm has three parameters: a kernel, ridge, and sparsity parameter with specifications detailed in the parameter documentation. 
-#' @description Implementation of sparse kernel optimal scoring from [Lapanowski and Gaynanova, preprint].
-#' @examples 
-#' Sigma <- 1.325386  #Set parameter values equal to result of SelectParam.
-#' Gamma <- 0.07531579 
-#' Lambda <- 0.002855275
-#' output <- SparseKernOptScore(Data = Data$TrainData,
-#'                              Cat = Data$CatTrain,
-#'                              Lambda = Lambda,
-#'                              Gamma = Gamma,
-#'                              Sigma = Sigma)
-#' print(output)
-#' @export
-#' @return A list of
-#'  \item{Dvec}{ (n x 1) Discrimiant coefficients vector.}
-#'  \item{Weights}{ (p x 1) Final weight vector.}
 SparseKernOptScore <- function(Data, Cat, w0=rep(1, ncol(Data)), Lambda, Gamma, Sigma, Maxniter=100,
                         Epsilon = 1e-05, Error = 1e-05) {
   Y<-IndicatMat(Cat)$Categorical
@@ -289,24 +235,6 @@ SparseKernOptScore <- function(Data, Cat, w0=rep(1, ncol(Data)), Lambda, Gamma, 
   return(list(Weights = w0, Dvec = A))
 }
 
-### Automatic ridge penalty selector.
-#' @title Automatic stabilization ridge parameter selection. 
-#' @return \item{Gamma}{Ridge parameter.} 
-#' @param Data (n x p) Matrix of training data with numeric features. Cannot have missing values.
-#' @param Cat (n x 1) Vector of class membership. Values must be either 1 or 2.
-#' @param Sigma Gaussian kernel parameter. Must be > 0.
-#' @param Epsilon Numerical stability constant with default value 1e-05. Must be > 0 and is typically chosen to be small.
-#' @references 
-#' Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', (preprint)
-#' @references 
-#' Lancewicki, Tomer. "Regularization of the kernel matrix via covariance matrix shrinkage estimation." arXiv preprint arXiv:1707.06156 (2017).
-#' @examples 
-#' Sigma <- 1.325386  #Set parameter value equal to result of SelectParam.
-#' SelectRidge(Data = Data$TrainData , 
-#'             Cat = Data$CatTrain , 
-#'             Sigma = Sigma)
-#' @description An automatic ridge parameter selection method. Uses the stabilization technique presented in [Lapanowski and Gaynanova, preprint] which is modified from [Lancewicki, 2017]. Uses the Gaussian kernel.
-#' @export
 SelectRidge <- function(Data, Cat, Sigma, Epsilon = 1e-05) {
   YTrain <- IndicatMat(Cat)$Categorical
   Opt_ScoreTrain <- OptScores(Cat)
@@ -500,29 +428,55 @@ LassoCV <- function(Data, Cat, B, Gamma, Sigma,
 #' @examples 
 #' Parameters <- SelectParams(Data = Data$TrainData , Cat = Data$CatTrain)
 #' print(Parameters)
-SelectParams <- function(Data, Cat, Epsilon = 1e-05) {
-  E <- matrix(0, nrow = 5, ncol = 4)
-  QuantileTest <- c(0.05, 0.1, 0.2, 0.3,.5)
-  Data1 <- subset(Data , Cat == 1)
-  Data2 <- subset(Data , Cat == 2)
-  DistanceMat <- rdist(x1 = Data1, x2 = Data2)
+SelectParams <- function(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05) {
+  if(is.null(Sigma) & is.null(Gamma)){
+    E <- matrix(0, nrow = 5, ncol = 4)
+    QuantileTest <- c(0.05, 0.1, 0.2, 0.3,.5)
+    Data1 <- subset(Data , Cat == 1)
+    Data2 <- subset(Data , Cat == 2)
+    DistanceMat <- rdist(x1 = Data1, x2 = Data2)
   
-  Y <- IndicatMat(Cat)$Categorical
-  Theta <- OptScores(Cat)
-  YTheta <- Y %*% Theta
+    Y <- IndicatMat(Cat)$Categorical
+    Theta <- OptScores(Cat)
+    YTheta <- Y %*% Theta
   
-  for(j in 1:5){
-    Sigma <- quantile(DistanceMat, QuantileTest[j])
+    for(j in 1:5){
+      Sigma <- quantile(DistanceMat, QuantileTest[j])
     
-    Gamma <- SelectRidge(Data, Cat, Sigma, Epsilon)
-    K <- KernelMat(Data, Sigma)
-    A <- sparseKOS::SolveKOSCPP(YTheta, K, Gamma)
-    B <- FormQB(Data, A, YTheta, w = rep(1, ncol(Data)), Sigma, Gamma)$B
-    output <- LassoCV(Data, Cat, B, Gamma, Sigma, Epsilon)
-    E[j, ] <- c(min(output$Errors), Gamma, output$Lambda, Sigma)
+      Gamma <- SelectRidge(Data, Cat, Sigma, Epsilon)
+      K <- KernelMat(Data, Sigma)
+      A <- sparseKOS::SolveKOSCPP(YTheta, K, Gamma)
+      B <- FormQB(Data, A, YTheta, w = rep(1, ncol(Data)), Sigma, Gamma)$B
+      output <- LassoCV(Data, Cat, B, Gamma, Sigma, Epsilon)
+      E[j, ] <- c(min(output$Errors), Gamma, output$Lambda, Sigma)
+    }
+    j <- which.min(E[, 1])
+    return(list(Sigma = E[j, 4], Gamma = E[j, 2], Lambda = E[j, 3]))
   }
-  j <- which.min(E[, 1])
-  return(list(Sigma = E[j, 4], Gamma = E[j, 2], Lambda = E[j, 3]))
+  if( is.not.null(Sigma) & is.not.null(Gamma)){
+    ### Need to Create Lambda Value ###
+    Y <- IndicatMat(Cat)$Categorical
+    Theta <- OptScores(Cat)
+    YTheta <- Y %*% Theta
+    K <- KernelMat(Data, Sigma)
+    Dvec <- SolveKOSCPP( YTheta, K, Gamma)
+    B <- FormQB(Data, Dvec, YTheta, w=rep(1, ncol(Data)), Gamma, Sigma)$B
+    Lambda <- LassoCV(Data , Cat, B, Gamma, Sigma)$Lambda
+  }
+  if(is.not.null(Sigma) & is.null(Gamma)){
+    Gamma <- SelectRidge(Data, Cat, Sigma, Epsilon)
+    Y <- IndicatMat(Cat)$Categorical
+    Theta <- OptScores(Cat)
+    YTheta <- Y %*% Theta
+    K <- KernelMat(Data, Sigma)
+    Dvec <- SolveKOSCPP( YTheta, K, Gamma)
+    B <- FormQB(Data, Dvec, YTheta, w=rep(1, ncol(Data)), Gamma, Sigma)$B
+    Lambda <- LassoCV(Data , Cat, B, Gamma, Sigma)$Lambda
+  }
+  if(is.not.null(Gamma) & is.null(Sigma)){
+    stop("Hierarchial order of parameters violated.")
+  }
+  return(list(Sigma = Sigma, Gamma = Gamma, Lambda = Lambda))
 }
 
 
@@ -572,20 +526,5 @@ CreateFolds <- function(TrainCategoryF) {
   return(as.numeric(Labels$FoldLabel))
 }
 
-
-GeneratePlot<-function(E){
-  E <- as.data.frame(E)
-  colnames(E) <- c("Sparse KOS", "Random Forest","KOS", "Kernel SVM","Neural Networks","KNN","Sparse LDA")
-  E <- stack(E)
-  E$ind <- factor(E$ind, levels = c("Sparse KOS", "KOS","Random Forest", "Kernel SVM","Neural Networks","KNN","Sparse LDA"))
-  
-  line <- "#00274c"
-  fill <- "white"
-  P <- ggplot(E, aes(x=ind,y=values))
-  P <- P + geom_boxplot(fill = fill, colour = line,alpha=.85,outlier.shape = 19)
-  P <- P + scale_x_discrete(name = "Classification Method")
-  P <- P + scale_y_continuous(name = "Misclassification Error Rates\n on Test Data")
-  return(P)
-}
 
 
