@@ -17,7 +17,7 @@ The second function is `Predict`. It has implementation
 Predict( X = NULL , Data, Cat, Sigma = NULL, Gamma = NULL, Lasso = NULL)
 ```
 
-the third function is ``GetProjection``. It has the implementation
+The third function is ``GetProjection``. It has the implementation
 ```
 GetProjection( Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
