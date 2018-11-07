@@ -36,10 +36,28 @@ If the user supplies parameter values which violate the hierarchical ordering, t
 
 ```
 library(sparseKOS)
+```
+We first illustrate examples of the `SelectParams` function.
 
+For an exmaple of generating all of the parameter values
+```
 SelectParams(Data = Data$TrainData,
              Cat = Data$CatTrain)
 ```
+The user can specify a value of `Sigma` or of both `Sigma` and `Gamma`
+```
+SelectParams(Data = Data$TrainData,
+             Cat = Data$CatTrain,
+             Sigma = 1.325386)
+
+SelectParams(Data = Data$TrainData,
+             Cat = Data$CatTrain,
+             Sigma = 1.325386,
+             Gamma = 0.07531579)
+```
+
+
+
 For an example with pre-specified parmeter values:
 ```
 Sigma <- 1.325386
