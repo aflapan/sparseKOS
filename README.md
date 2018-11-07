@@ -37,6 +37,8 @@ If the user supplies parameter values which violate the hierarchical ordering, t
 ```
 library(sparseKOS)
 ```
+The examples here use a data set labelled `Data`. It comes with the `sparseKOS` package, and documentation is included in the package. It contains a list of training and test data `TrainData`, `TestData` along with corresponding categorical labels `CatTrain` and `CatTest`.
+
 We first illustrate examples of the `SelectParams` function.
 
 For an exmaple of generating all of the parameter values
