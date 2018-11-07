@@ -7,9 +7,11 @@ devtools::install_github("aflapan/sparseKOS")
 ```
 # Functions
 
-There are three functions in `sparseKOS`. The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. It has implementation
+There are three functions in `sparseKOS`. 
+
+The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. It has implementation
 ```
-SelectParams()
+SelectParams( Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
 ```
 
 The second function is `Predict`. It has implementation 
