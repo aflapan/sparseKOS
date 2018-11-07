@@ -60,3 +60,14 @@ Predict( Data = Data$TrainData,
          Lambda = Lambda)
 ```
 Note that two different lists are returned in the above examples. The first example returns a list which includes the predicted class memberships for the unlabelled data in `X = Data$TestData` along with the final weights `Weights` and discriminant vector `Dvec`. The second example does not supply a value for the `X` variable and thus does not return predicted class memberships. 
+
+The user is also allowed to not specify certain parameters. In the following example, we leave `Sigma`, `Gamma`, and `Lamda` undefined. The function `Predict` automatically generates them.
+```
+Predict( X = Data$TestData,
+         Data = Data$TrainData,
+         Cat = Data$CatTrain)
+         
+Predict( Data = Data$TrainData,
+         Cat = Data$CatTrain)
+
+```
