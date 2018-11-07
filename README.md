@@ -7,8 +7,6 @@ devtools::install_github("aflapan/sparseKOS")
 ```
 # Functions
 
-There are three functions in `sparseKOS`. 
-
 The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. The user is allowed to specify the values of either `Sigma` or both `Sigma, Gamma` (see the section Hierarchical Parameters for more details)
 
  It has implementation
@@ -27,7 +25,7 @@ GetProjection( Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
 
 # Hierarchical Parameters
-Sparse kernel optimal scoring has three parameters: a Gaussian kernel parameter `Sigma`, a ridge parameter `Gamma`, and a sparaity parameter `Lambda`. They have a hierarchical dependency, in that `Sigma` influences `Gamma`, and both influence `Lambda`. The ordering is 
+Sparse kernel optimal scoring has three parameters: a Gaussian kernel parameter `Sigma`, a ridge parameter `Gamma`, and a sparsity parameter `Lambda`. They have a hierarchical dependency, in that `Sigma` influences `Gamma`, and both influence `Lambda`. The ordering is 
 
 Top     `Sigma`
 
