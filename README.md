@@ -17,11 +17,6 @@ SelectParams( Data, Cat, Sigma = NULL, Gamma = NULL)
 Predict( X = NULL , Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
 ```
 
-3) The third function is ``GetProjection``. This function returns the projection values  It has the implementation
-```
-GetProjection( X, Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL)
-```
-
 # Hierarchical Parameters
 Sparse kernel optimal scoring has three parameters: a Gaussian kernel parameter `Sigma`, a ridge parameter `Gamma`, and a sparsity parameter `Lambda`. They have a hierarchical dependency, in that `Sigma` influences `Gamma`, and both influence `Lambda`. The ordering is 
 
