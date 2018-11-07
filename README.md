@@ -7,10 +7,6 @@ devtools::install_github("aflapan/sparseKOS")
 ```
 # Functions
 
-```
-library(sparseKOS)
-```
-
 There are two main functions in `sparseKOS`. The first is `SelectParams`, which implements the automatic variable select methods used in sparse kernel optimal scoring. 
 ```
 SelectParams()
@@ -23,3 +19,21 @@ Predict( X , Data, Cat, Sigma, Gamma, Lasso)
 
 # Examples
 
+```
+library(sparseKOS)
+
+SelectParams(Data = Data$TrainData,
+             Cat = Data$CatTrain)
+```
+
+```
+Sigma <- 1.325386
+Gamma <- 0.07531579
+Lambda <- 0.002855275
+Predict( X = Data$TestData,
+         Data = Data$TrainData,
+         Cat = Data$CatTrain, 
+         Sigma = Sigma,
+         Gamma = Gamma, 
+         Lambda = Lambda)
+```
