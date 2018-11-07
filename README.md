@@ -30,6 +30,7 @@ SelectParams(Data = Data$TrainData,
 Sigma <- 1.325386
 Gamma <- 0.07531579
 Lambda <- 0.002855275
+
 Predict( X = Data$TestData,
          Data = Data$TrainData,
          Cat = Data$CatTrain, 
