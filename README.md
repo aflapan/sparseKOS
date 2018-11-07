@@ -5,7 +5,7 @@ This is a Git repository for sparse kernel optimal scoring. The R package `spars
 ```
 devtools::install_github("aflapan/sparseKOS")
 ```
-# Examples
+# Functions
 
 ```
 library(sparseKOS)
@@ -15,3 +15,11 @@ There are two main functions in `sparseKOS`. The first is `SelectParams`, which 
 ```
 SelectParams()
 ```
+
+The second function is `Predict`. It has the implementation 
+```
+Predict( X , Data, Cat, Sigma, Gamma, Lasso)
+```
+
+# Examples
+
