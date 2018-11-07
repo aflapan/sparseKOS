@@ -6,3 +6,7 @@ This is a Git repository for sparse kernel optimal scoring. The R package `spars
 devtools::install_github("aflapan/sparseKOS")
 ```
 # Examples
+
+```
+library(sparseKOS)
+```
