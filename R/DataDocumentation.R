@@ -1,10 +1,4 @@
-#' Example Data. 
-#'
-#'
-#'
-#' List containing training and test data along with categorical labels for example data.
-#' 
-#' 
+#' A list consisting of Training and Test data along with corresponding class labels.
 #' @format A list consisting of:
 #' \describe{
 #'   \item{TrainData}{ (179 x 4) Matrix of training data features. the first two features satisfy sqrt(x_{i1}^2 + x_{i2}^2) > 2/3 if the ith sample is in class 1. 

@@ -3,7 +3,7 @@
 \docType{data}
 \name{Data}
 \alias{Data}
-\title{Example Data.}
+\title{A list consisting of Training and Test data along with corresponding class labels.}
 \format{A list consisting of:
 \describe{
   \item{TrainData}{ (179 x 4) Matrix of training data features. the first two features satisfy sqrt(x_{i1}^2 + x_{i2}^2) > 2/3 if the ith sample is in class 1. 
@@ -22,8 +22,8 @@ Simulation model 1 from [Lapanowski and Gaynanova, preprint].
 \usage{
 Data
 }
-\details{
-List containing training and test data along with categorical labels for example data.
+\description{
+A list consisting of Training and Test data along with corresponding class labels.
 }
 \references{
 Lapanowski, Alexnader F., and Gaynanova, Irina. ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', preprint.

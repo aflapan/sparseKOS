@@ -21,10 +21,10 @@ Classify <- function(X, Data, Cat, Sigma = NULL, Gamma = NULL , Lambda = NULL){
   Kw <- KwMat( Data , w, Sigma)
   
   # Create projection Values
-  TrainProjections <- GetProjection(X = Data, Data = Data, Cat = Cat, Dvec=Dvec, Kw = Kw, w = w, Sigma = Sigma, Gamma = Gamma )
+  TrainProjections <- GetProjection(X = Data, Data = Data, Cat = Cat, Dvec=Dvec, w = w, Kw = Kw, Sigma = Sigma, Gamma = Gamma )
   
   ### Need test projection values for LDA
-  NewProjections <- GetProjection(X = X, Data = Data, Cat = Cat, Dvec=Dvec, Kw = Kw, w = w, Sigma = Sigma , Gamma = Gamma )
+  NewProjections <- GetProjection(X = X, Data = Data, Cat = Cat, Dvec=Dvec,  w = w, Kw = Kw, Sigma = Sigma , Gamma = Gamma )
   NewProjections <- as.data.frame(NewProjections)
   colnames(NewProjections) <- c("Projections")
   
@@ -36,9 +36,9 @@ Classify <- function(X, Data, Cat, Sigma = NULL, Gamma = NULL , Lambda = NULL){
   LDAfit <- MASS::lda(Category ~ Projections, data = Training)
   
   # Predict class membership using LDA
-  Predictions <- predict(object = LDAfit, newdata = NewProjections)$class
+  Predictions <- stats::predict(object = LDAfit, newdata = NewProjections)$class
   
-  return(Predictions)
+  return(list(Predictions = Predictions, Weight = w, Dvec = Dvec))
 }
 
 is.not.null <- function(x) !is.null(x)
@@ -65,10 +65,6 @@ is.not.null <- function(x) !is.null(x)
 #'          Sigma = Sigma , 
 #'          Gamma = Gamma , 
 #'          Lambda = Lambda)
-#' @examples 
-#' Predict(X = Data$TestData , 
-#'          Data = Data$TrainData , 
-#'          Cat = Data$CatTrain)
 #' @return  A list of
 #' \item{Predictions}{ (m x 1) Vector of predicted class labels for the data points in Data. Only included in non-null value of X is provided.} 
 #' \item{Weights}{ (p x 1) Vector of feature weights.} 
@@ -96,6 +92,6 @@ Predict <- function(X = NULL, Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NU
   }
   else{
     Predict <- Classify(X, Data, Cat, Sigma, Gamma, Lambda)
-    return(list(Predictions = Predict, Weights = w, Dvec = Dvec))
+    return(Predict)
   }
 }

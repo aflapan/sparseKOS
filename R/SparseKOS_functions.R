@@ -1,3 +1,4 @@
+
 ## Forms Categorical Response Matrix and Diagonal group proportion matrix. Each row
 ## consists of 0s and a single 1.  The 1 is in the column corresponding to the group
 ## data point i belongs to.
@@ -76,14 +77,16 @@ Categorize <- function(x) {
 }
 
 
-GetProjection <- function(X, Data, Cat, Dvec=NULL, Kw=NULL, w=rep(1, ncol(Data)), Sigma=NULL , Gamma = NULL) {
+GetProjection <- function(X, Data, Cat, Dvec=NULL, w=rep(1, ncol(Data)), Kw = NULL, Sigma=NULL , Gamma = NULL) {
   if( any(w > 1) || any(w < -1)) stop("Some weight vector is outside the interval [-1,1]")
   if( is.null(Sigma) || is.null(Gamma)){
     output <- SelectParams(Data, Cat)
     Gamma <- output$Gamma
     Sigma <- output$Sigma
   }
-  Kw<- KwMat(Data, w, Sigma)
+  if( is.null(Kw)){
+    Kw <- KwMat(Data, w, Sigma)
+  }
   Y <- IndicatMat(Cat)$Categorical
   Theta <- OptScores(Cat)
   YTheta <- Y %*% Theta
@@ -94,7 +97,7 @@ GetProjection <- function(X, Data, Cat, Dvec=NULL, Kw=NULL, w=rep(1, ncol(Data))
   X <- as.matrix(X)
   if(ncol(X) != ncol(Data)) X <- t(X)
   X<- t( t(X) * w)
-  n <- nrow(K)
+  n <- nrow(Kw)
   PV<-apply(X, MARGIN = 1, FUN = function(z){
     Kx <- t(Kernel(z, Data, Sigma))  # Kernel evalutations of x and each vector in Data
     M1 <- colMeans(Kw)  #Create centered vector to shift Kx by
@@ -137,7 +140,7 @@ FormQB <- function(Data, A, YTheta, w, GammaQB, SigmaQB) {
   C <- (diag(n) - (1/n) * matrix(rep(1, n^2), nrow = n))  #Form centering matrix
   for (i in 1:k) {
     Avec <- A[, i]
-    Tmat <- sparseKOS::TMatCPP(Data, Avec, w, SigmaQB)  #Forms T matrix
+    Tmat <- TMatCPP(Data, Avec, w, SigmaQB)  #Forms T matrix
     Q <- (1/n) * crossprod(Tmat) + Q  #Creates t(CT)*CT and adds it to previous terms
     New <- (1/n) * crossprod(YTheta[, i] - C %*% (Kw %*% (C %*% Avec)) + Tmat %*%
                                w, Tmat) - (GammaQB/2) * crossprod(Avec, Tmat)
@@ -172,14 +175,14 @@ SparseKernOptScore <- function(Data, Cat, w0=rep(1, ncol(Data)), Lambda, Gamma, 
 
 
   # Create Initial Discrimiant Vector and Quadratic Form Terms#
-  Aold <- sparseKOS::SolveKOSCPP(YTheta, Kw, Gamma, Epsilon)
+  Aold <- SolveKOSCPP(YTheta, Kw, Gamma, Epsilon)
 
   OldQB <- FormQB(Data, A = Aold, YTheta = YTheta, w = w0, GammaQB = Gamma, Sigma)
   Qold <- OldQB$Q
   Bold <- OldQB$B
 
   # Record Objective Function Value with Initial Terms
-  OFV <- sparseKOS::ObjectiveFuncCPP(w0, Kw, Data, Aold, YTheta,Lambda, Gamma,  Epsilon)
+  OFV <- ObjectiveFuncCPP(w0, Kw, Data, Aold, YTheta,Lambda, Gamma,  Epsilon)
   OFV_seq <- rep(0, Maxniter)
   OFV_seq[niter] <- OFV
 
@@ -188,11 +191,11 @@ SparseKernOptScore <- function(Data, Cat, w0=rep(1, ncol(Data)), Lambda, Gamma, 
       break
     }
     # Update the Weights
-    w <- as.numeric(sparseKOS::CoordDesCPP( w0, Qold, Bold, Lambda, 1e-06, 1e+07))
+    w <- as.numeric(CoordDesCPP( w0, Qold, Bold, Lambda, 1e-06, 1e+07))
     Kw <- KwMat(Data, w, Sigma)
 
     ## Tests for decrease objective function###
-    OFV_Weights_new <- sparseKOS::ObjectiveFuncCPP(w, Kw, Data, Aold, YTheta, Lambda, Gamma, Epsilon)
+    OFV_Weights_new <- ObjectiveFuncCPP(w, Kw, Data, Aold, YTheta, Lambda, Gamma, Epsilon)
     # if(OFV_Weights_new>OFV)print('Weights Increased Obj. Func.')
 
     LinearOF <- crossprod(w0, (0.5) * Qold %*% w0) - Bold %*% w0 + (.5)*Lambda * sum(abs(w0))
@@ -200,12 +203,12 @@ SparseKernOptScore <- function(Data, Cat, w0=rep(1, ncol(Data)), Lambda, Gamma, 
     # if(LinearOF_New> LinearOF)print('Coord. Descent Failed') With new weights, Update
     # Kernel Matrix, and Solve for Discrimiant Vectors ##
 
-    A <- sparseKOS::SolveKOSCPP(YTheta,  Kw, Gamma, Epsilon)
+    A <- SolveKOSCPP(YTheta,  Kw, Gamma, Epsilon)
     if (sum(A^2) == 0) {
       print("Discriminant Vector is zero.")
     }
 
-    OFVa <- sparseKOS::ObjectiveFuncCPP(w, Kw, Data, A, YTheta, Lambda, Gamma, Epsilon)
+    OFVa <- ObjectiveFuncCPP(w, Kw, Data, A, YTheta, Lambda, Gamma, Epsilon)
     # if(OFVa>OFV_Weights_new)print('Discriminant Vectors Increased Obj. Func.')
 
     ### Update quadratic form terms ###
@@ -273,59 +276,7 @@ RidgeGCV <- function(Data, Cat, Sigma, Epsilon = 1e-05) {
 }
 
 
-## Computes the Error rate on a particular fold of data.  LambdaFold is the LASSO
-## penalty GammaFold is ridge penalty TrainDataFold is the m x p training data
-## TestDataFold is the n x p test data TrainCategoryFold is the categorical labels of
-## trianing data TestCategoryFold is the categorical labels of test data
-FoldErrorRate <- function(Lambda, Gamma, Sigma, TrainData, TestData,
-                          TrainCat, TestCat) {
-  YTrain <- IndicatMat(TrainCat)$Categorical  #Create n x G categorical response matrix
-  Opt_ScoreTrain <- OptScores(TrainCat)  #Create GxG-1 optimal scores
-  YThetaTrain <- YTrain %*% Opt_ScoreTrain  #Transformed response
-  
-  # Apply kernel feature selection algorithm on training data
-  output <- SparseKernOptScore(TrainData, TrainCat, w0 = rep(1, ncol(TrainData)), Lambda = Lambda,
-                      Gamma = Gamma, Sigma = Sigma, Maxniter = 100,
-                      Epsilon = 1e-05, Error = 1e-05)
-  
-  w <- output$Weights
-  
-  # If sparsity parameter was too large, all weights are set to 0. Set misclassification
-  # Error to be maximial
-  if (sum(abs(w)) == 0) {
-    return(length(TestCat))
-  }
-  # Scale test data by weights
-  NewTestData <- t(t(as.matrix(TestData)) * w)
-  NewTrainData <- t(t(as.matrix(TrainData)) * w)
-                        
-  # Need weighted kernel matrix to compute projection values
-  NewKtrain <- KernelMat(NewTrainData, Sigma = Sigma)
-  A <- output$Dvec
-  
-  # Create projection Values
-  NewTestProjections <- apply(NewTestData, MARGIN = 1, FUN = function(x) GetProjection(x,
-                                          NewTrainData, A, NewKtrain, Sigma))
-  
-  ### Need test projection values for LDA
-  TrainProjections <- apply(NewTrainData, MARGIN = 1, FUN = function(x) GetProjection(x,
-                                          NewTrainData,TrainCat, A, NewKtrain, w,Sigma))
-  
-  ### All of this is used to create discirminant line
-  OldData <- data.frame(TrainCategoryFold, TrainProjections)
-  colnames(OldData) <- c("Category", "Projections")
-  
-  ## fit LDA on training projections
-  LDAfit <- lda(Category ~ Projections, data = OldData)
-  NewData <- data.frame(TestCat, NewTestProjections)
-  colnames(NewData) <- c("Category", "Projections")
-  
-  # Predict class membership using LDA
-  predictions <- predict(object = LDAfit, newdata = NewData)$class
-  
-  # Compute number of misclassified points
-  return(sum(abs(as.numeric(predictions) - TestCat)))  
-}
+
 
 
 
@@ -333,7 +284,7 @@ FoldErrorRate <- function(Lambda, Gamma, Sigma, TrainData, TestData,
 LassoCV <- function(Data, Cat, B, Gamma, Sigma,
                     Epsilon = 1e-05) {
   c <- 2 * max(abs(B))
-  Lambdaseq <- lseq(from = 1e-10 * c, to = c, length.out = 20)
+  Lambdaseq <- emdbook::lseq(from = 1e-10 * c, to = c, length.out = 20)
   
   n <- nrow(Data)
   FoldLabels <- CreateFolds(Cat)
@@ -381,20 +332,20 @@ LassoCV <- function(Data, Cat, B, Gamma, Sigma,
           A <- output$Dvec
           
           # Create projection Values
-          NewTestProjections <- GetProjection(X = NewTestDataFold, Data=NewTrainDataFold, Cat=NewTrainCat, Dvec=A, Kw=NewKtrain, Sigma = Sigma, Gamma = Gamma)
+          NewTestProjections <- GetProjection(X = NewTestDataFold, Data=NewTrainDataFold, Cat = NewTrainCat, Dvec = A, w = w, Kw = NewKtrain, Sigma = Sigma, Gamma = Gamma)
           
           ### Need test projection values for LDA
-          TrainProjections <- GetProjection(X = NewTrainDataFold, Data=NewTrainDataFold, Cat=NewTrainCat, Dvec=A, Kw=NewKtrain, Sigma = Sigma, Gamma = Gamma)
+          TrainProjections <- GetProjection(X = NewTrainDataFold, Data=NewTrainDataFold, Cat = NewTrainCat, Dvec = A, w = w, Kw = NewKtrain, Sigma = Sigma, Gamma = Gamma)
           
           ### All of this is used to create discirminant line
           OldData <- data.frame(as.numeric(NewTrainCat), as.numeric(TrainProjections))
           colnames(OldData) <- c("Category", "Projections")
           ## fit LDA on training projections
-          LDAfit <- lda(Category ~ Projections, data = OldData)
+          LDAfit <- MASS::lda(Category ~ Projections, data = OldData)
           NewData <- data.frame(as.numeric(NewTestCat), as.numeric(NewTestProjections))
           colnames(NewData) <- c("Category", "Projections")
           # Predict class membership using LDA
-          predictions <- predict(object = LDAfit, newdata = NewData)$class
+          predictions <- stats::predict(object = LDAfit, newdata = NewData)$class
           # Compute number of misclassified points
           FoldError <- sum(abs(as.numeric(predictions) - NewTestCat))
           totalError <- totalError + FoldError
@@ -410,6 +361,8 @@ LassoCV <- function(Data, Cat, B, Gamma, Sigma,
 #' @title Generates parameters.
 #' @param Data (n x p) Matrix of training data with numeric features. Cannot have missing values.
 #' @param Cat (n x 1) Vector of class membership. Values must be either 1 or 2.
+#' @param Sigma Scalar Gaussian kernel parameter. Default set to NULL and is automatically generated if user-specified value not provided. Must be > 0. User-specified parameters must satisfy hierarchical ordering.
+#' @param Gamma Scalar ridge parameter used in kernel optimal scoring. Default set to NULL and is automatically generated if user-specified value not provided. Must be > 0. User-specified parameters must satisfy hierarchical ordering.
 #' @param Epsilon Numerical stability constant with default value 1e-05. Must be > 0 and is typically chosen to be small.
 #' @references 
 #' Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', (preprint)
@@ -420,32 +373,37 @@ LassoCV <- function(Data, Cat, B, Gamma, Sigma,
 #' The Gaussian kernel parameter is generated using five-fold cross-validation of the misclassification error rate aross the {.05, .1, .2, .3, .5} quantiles of squared-distances between groups. 
 #' The ridge parameter is generated using a stabilization technique developed in [Lapanowski and Gaynanova, preprint].
 #' The sparsity parameter is generated by five-fold cross-validation over a logarithmic grid of 20 values in an automatically-generated interval.
+#' @importFrom stats quantile sd
 #' @export
 #' @return A list of 
 #' \item{Sigma}{ Gaussian kernel parameter.}  
 #' \item{Gamma}{ Ridge Parameter.}
 #' \item{Lambda}{ Sparsity parameter.}
 #' @examples 
-#' Parameters <- SelectParams(Data = Data$TrainData , Cat = Data$CatTrain)
-#' print(Parameters)
+#' Sigma <- 1.325386  #Set parameter values equal to result of SelectParam.
+#' Gamma <- 0.07531579 #Speeds up example.
+#' SelectParams(Data = Data$TrainData , 
+#'              Cat = Data$CatTrain, 
+#'              Sigma = Sigma, 
+#'              Gamma = Gamma)
 SelectParams <- function(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05) {
   if(is.null(Sigma) & is.null(Gamma)){
     E <- matrix(0, nrow = 5, ncol = 4)
     QuantileTest <- c(0.05, 0.1, 0.2, 0.3,.5)
     Data1 <- subset(Data , Cat == 1)
     Data2 <- subset(Data , Cat == 2)
-    DistanceMat <- rdist(x1 = Data1, x2 = Data2)
+    DistanceMat <- fields::rdist(x1 = Data1, x2 = Data2)
   
     Y <- IndicatMat(Cat)$Categorical
     Theta <- OptScores(Cat)
     YTheta <- Y %*% Theta
   
     for(j in 1:5){
-      Sigma <- quantile(DistanceMat, QuantileTest[j])
+      Sigma <- stats::quantile(DistanceMat, QuantileTest[j])
     
       Gamma <- SelectRidge(Data, Cat, Sigma, Epsilon)
       K <- KernelMat(Data, Sigma)
-      A <- sparseKOS::SolveKOSCPP(YTheta, K, Gamma)
+      A <- SolveKOSCPP(YTheta, K, Gamma)
       B <- FormQB(Data, A, YTheta, w = rep(1, ncol(Data)), Sigma, Gamma)$B
       output <- LassoCV(Data, Cat, B, Gamma, Sigma, Epsilon)
       E[j, ] <- c(min(output$Errors), Gamma, output$Lambda, Sigma)
@@ -484,9 +442,9 @@ SelectParams <- function(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
 ### of Training Data matrix. Shifts and scales Test Data matrix
 ### columns by those values.
 CenterScale<-function(TrainData, TestData){
-  ColMeans<-apply(TrainData, MARGIN=2, FUN=mean)
+  ColMeans<-apply(TrainData, MARGIN=2, FUN = mean)
   
-  ColSD<-apply(TrainData, MARGIN=2, FUN=sd)
+  ColSD<-apply(TrainData, MARGIN=2, FUN = stats::sd)
   
   TrainData<-scale(TrainData, scale=T)
   
@@ -503,10 +461,10 @@ CenterScale<-function(TrainData, TestData){
 }
 
 ### Helper Function. Creates fold labels which maintain class proportions
-CreateFolds <- function(TrainCategoryF) {
-  n <- length(TrainCategoryF)
+CreateFolds <- function(Cat) {
+  n <- length(Cat)
   Index <- c(1:n)
-  Category <- data.frame(Cat = TrainCategoryF, Index = Index)
+  Category <- data.frame(Cat = Cat, Index = Index)
   Cat1 <- subset(Category, Cat == 1)
   n1 <- nrow(Cat1)
   Cat2 <- subset(Category, Cat == 2)

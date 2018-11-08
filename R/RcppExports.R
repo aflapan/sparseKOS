@@ -2,30 +2,30 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 signCPP <- function(x) {
-    .Call(`_sparseKOS_signCPP`, x)
+    .Call('_sparseKOS_signCPP', PACKAGE = 'sparseKOS', x)
 }
 
 SoftThreshCPP <- function(x, lambda) {
-    .Call(`_sparseKOS_SoftThreshCPP`, x, lambda)
+    .Call('_sparseKOS_SoftThreshCPP', PACKAGE = 'sparseKOS', x, lambda)
 }
 
 CoordDesCPP <- function(w0, Q, beta, Lambda, Epsilon, Maxniter = 1.0e7) {
-    .Call(`_sparseKOS_CoordDesCPP`, w0, Q, beta, Lambda, Epsilon, Maxniter)
+    .Call('_sparseKOS_CoordDesCPP', PACKAGE = 'sparseKOS', w0, Q, beta, Lambda, Epsilon, Maxniter)
 }
 
 SolveKOSCPP <- function(YTheta, K, Gamma, Epsilon = 1e-5) {
-    .Call(`_sparseKOS_SolveKOSCPP`, YTheta, K, Gamma, Epsilon)
+    .Call('_sparseKOS_SolveKOSCPP', PACKAGE = 'sparseKOS', YTheta, K, Gamma, Epsilon)
 }
 
 DerivCPP <- function(x, Data, w0, sigmaD) {
-    .Call(`_sparseKOS_DerivCPP`, x, Data, w0, sigmaD)
+    .Call('_sparseKOS_DerivCPP', PACKAGE = 'sparseKOS', x, Data, w0, sigmaD)
 }
 
 TMatCPP <- function(Data, A, w0, sigmaTm) {
-    .Call(`_sparseKOS_TMatCPP`, Data, A, w0, sigmaTm)
+    .Call('_sparseKOS_TMatCPP', PACKAGE = 'sparseKOS', Data, A, w0, sigmaTm)
 }
 
 ObjectiveFuncCPP <- function(w, KwOF, Data, DVectors, YTheta, LambdaOF, GammaOF, EpsilonOF = 1e-5) {
-    .Call(`_sparseKOS_ObjectiveFuncCPP`, w, KwOF, Data, DVectors, YTheta, LambdaOF, GammaOF, EpsilonOF)
+    .Call('_sparseKOS_ObjectiveFuncCPP', PACKAGE = 'sparseKOS', w, KwOF, Data, DVectors, YTheta, LambdaOF, GammaOF, EpsilonOF)
 }
 

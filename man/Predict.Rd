@@ -44,9 +44,6 @@ Predict(X = Data$TestData ,
          Sigma = Sigma , 
          Gamma = Gamma , 
          Lambda = Lambda)
-Predict(X = Data$TestData , 
-         Data = Data$TrainData , 
-         Cat = Data$CatTrain)
 }
 \references{
 Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse feature selection in kernel discriminant analysis via optimal scoring'', preprint.

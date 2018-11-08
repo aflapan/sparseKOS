@@ -13,8 +13,6 @@
 The DESCRIPTION file:
 \packageDESCRIPTION{sparseKOS}
 \packageIndices{sparseKOS}
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
 }
 \author{
 \packageAuthor{sparseKOS}
@@ -22,15 +20,20 @@ The DESCRIPTION file:
 Maintainer: \packageMaintainer{sparseKOS}
 }
 \references{
-~~ Literature or other references for background information ~~
+Lapanowski, Alexander F., and Gaynanova, Irina ``Sparse feature selection in kernel discriminant analysis via optimal scoring''. Preprint
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in ~~
-~~ the R documentation directory ~~
 \keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
 \examples{
-~~ simple examples of the most important functions ~~
+SelectParams(Data = Data$TrainData,
+             Cat = Data$CatTrain,
+             Sigma = 1.325386,
+             Gamma = 0.07531579)
+             
+
+Predict( X = Data$TestData,
+         Data = Data$TrainData,
+         Cat = Data$CatTrain, 
+         Sigma = 1.325386,
+         Gamma = 0.07531579, 
+         Lambda = 0.002855275)
 }
