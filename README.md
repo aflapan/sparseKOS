@@ -29,7 +29,7 @@ Middle  `Gamma`
 
 Bottom  `Lambda`
 
-When using either of the functions, the user is only allowed to specify parameter combinations which adhere to the hierarchical ordering above. That is, they can only input parameters which go from Top to Bottom. For example, they could secify both `Sigma` and `Gamma`, but leave `Lambda` as the default `NULL` value. The user would not be allowed to specify only `Lambda` while leaving `Sigma` and `Gamma` as their default `NULL` values.
+When using either of the functions, the user is only allowed to specify parameter combinations which adhere to the hierarchical ordering above. That is, they can only input parameters which go from Top to Bottom. For example, they could specify both `Sigma` and `Gamma`, but leave `Lambda` as the default `NULL` value. On the other hand, the user would not be allowed to specify only `Lambda` while leaving `Sigma` and `Gamma` as their default `NULL` values.
 
 If the user supplies parameter values which violate the hierarchical ordering, the error message ``Hierarchical order of parameters violated.`` will be returned.
 
