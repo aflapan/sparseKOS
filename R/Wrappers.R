@@ -78,16 +78,18 @@ Predict <- function(X = NULL, Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NU
   if(is.not.null(Gamma) & is.null(Sigma)){
     stop("Hierarchical definining of parameters violated.")
   }
-  if( is.null(Lambda)){
+  if(is.null(Lambda)){
     output <- SelectParams(Data = Data, Cat = Cat , Sigma = Sigma, Gamma = Gamma, Epsilon = Epsilon)
     Sigma <- output$Sigma
     Gamma <- output$Gamma
     Lambda <- output$Lambda
   }
+  
+  output <- SparseKernOptScore(Data, Cat, rep(1, ncol(Data)), Lambda, Gamma, Sigma)
+  w <- output$Weights
+  Dvec <- output$Dvec
+  
   if(is.null(X)){
-    output <- SparseKernOptScore(Data, Cat, rep(1, ncol(Data)), Lambda, Gamma, Sigma)
-    w <- output$Weights
-    Dvec <- output$Dvec
     return(list(Weights = w, Dvec = Dvec))
   }
   else{

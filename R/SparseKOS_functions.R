@@ -405,13 +405,13 @@ SelectParams <- function(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
       K <- KernelMat(Data, Sigma)
       A <- SolveKOSCPP(YTheta, K, Gamma)
       B <- FormQB(Data, A, YTheta, w = rep(1, ncol(Data)), Sigma, Gamma)$B
-      output <- LassoCV(Data, Cat, B, Gamma, Sigma, Epsilon)
+      output <- LassoCV(Data = Data, Cat = Cat, B = B, Gamma = Gamma, Sigma = Sigma, Epsilon = Epsilon)
       E[j, ] <- c(min(output$Errors), Gamma, output$Lambda, Sigma)
     }
     j <- which.min(E[, 1])
     return(list(Sigma = E[j, 4], Gamma = E[j, 2], Lambda = E[j, 3]))
   }
-  if( is.not.null(Sigma) & is.not.null(Gamma)){
+  else if( is.not.null(Sigma) & is.not.null(Gamma)){
     ### Need to Create Lambda Value ###
     Y <- IndicatMat(Cat)$Categorical
     Theta <- OptScores(Cat)
@@ -419,9 +419,9 @@ SelectParams <- function(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
     K <- KernelMat(Data, Sigma)
     Dvec <- SolveKOSCPP( YTheta, K, Gamma)
     B <- FormQB(Data, Dvec, YTheta, w=rep(1, ncol(Data)), Gamma, Sigma)$B
-    Lambda <- LassoCV(Data , Cat, B, Gamma, Sigma)$Lambda
+    Lambda <- LassoCV(Data = Data , Cat = Cat, B = B, Gamma = Gamma, Sigma = Sigma, Epsilon = Epsilon)$Lambda
   }
-  if(is.not.null(Sigma) & is.null(Gamma)){
+  else if(is.not.null(Sigma) & is.null(Gamma)){
     Gamma <- SelectRidge(Data, Cat, Sigma, Epsilon)
     Y <- IndicatMat(Cat)$Categorical
     Theta <- OptScores(Cat)
@@ -431,7 +431,7 @@ SelectParams <- function(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
     B <- FormQB(Data, Dvec, YTheta, w=rep(1, ncol(Data)), Gamma, Sigma)$B
     Lambda <- LassoCV(Data , Cat, B, Gamma, Sigma)$Lambda
   }
-  if(is.not.null(Gamma) & is.null(Sigma)){
+  else{
     stop("Hierarchical order of parameters violated.")
   }
   return(list(Sigma = Sigma, Gamma = Gamma, Lambda = Lambda))
