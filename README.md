@@ -68,7 +68,7 @@ will return with an error message.
 
 We now provide examples of the `Predict` function. 
 
-For an example with pre-specified parmeter values:
+For an example with pre-specified parameter values:
 ```
 Sigma <- 1.325386
 Gamma <- 0.07531579
