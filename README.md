@@ -1,7 +1,6 @@
 # sparseKOS
 This is a Git repository for sparse kernel optimal scoring. The R package `sparseKOS` is used for non-linear binary classification with simultaneous sparse feature selection. The corresponding reference is Lapanowski, Alexander F., and Gaynanova, Irina ''Sparse feature selection in kernel discriminant analysis via optimal scoring'', preprint.
 
-The R package provides further documentation for the data set and functions detailed here.
 
 # Installation 
 ```
