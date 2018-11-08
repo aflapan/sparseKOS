@@ -26,6 +26,6 @@ Data
 A list consisting of Training and Test data along with corresponding class labels.
 }
 \references{
-Lapanowski, Alexnader F., and Gaynanova, Irina. ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', preprint.
+Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', preprint.
 }
 \keyword{datasets}

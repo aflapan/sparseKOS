@@ -432,7 +432,7 @@ SelectParams <- function(Data, Cat, Sigma = NULL, Gamma = NULL, Epsilon = 1e-05)
     Lambda <- LassoCV(Data , Cat, B, Gamma, Sigma)$Lambda
   }
   if(is.not.null(Gamma) & is.null(Sigma)){
-    stop("Hierarchial order of parameters violated.")
+    stop("Hierarchical order of parameters violated.")
   }
   return(list(Sigma = Sigma, Gamma = Gamma, Lambda = Lambda))
 }

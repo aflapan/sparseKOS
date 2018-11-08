@@ -12,5 +12,5 @@
 #'   ...
 #' }
 #' @source Simulation model 1 from [Lapanowski and Gaynanova, preprint].
-#' @references Lapanowski, Alexnader F., and Gaynanova, Irina. ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', preprint.
+#' @references Lapanowski, Alexander F., and Gaynanova, Irina. ``Sparse Feature Selection in Kernel Discriminant Analysis via Optimal Scoring'', preprint.
 "Data"

@@ -73,10 +73,10 @@ is.not.null <- function(x) !is.null(x)
 Predict <- function(X = NULL, Data, Cat, Sigma = NULL, Gamma = NULL, Lambda = NULL, Epsilon = 1e-05){
   ## Check for Violatin of Hierarchical Ordering
   if(is.not.null(Lambda) & (is.null(Sigma) || is.null(Gamma))){
-    stop("Hierarchial definining of parameters violated.")
+    stop("Hierarchical definining of parameters violated.")
   }
   if(is.not.null(Gamma) & is.null(Sigma)){
-    stop("Hierarchial definining of parameters violated.")
+    stop("Hierarchical definining of parameters violated.")
   }
   if( is.null(Lambda)){
     output <- SelectParams(Data = Data, Cat = Cat , Sigma = Sigma, Gamma = Gamma, Epsilon = Epsilon)
