@@ -58,7 +58,7 @@ SelectParams(Data = Data$TrainData,
              Sigma = 1.325386,
              Gamma = 0.07531579)
 ```
-However, the user CANNOT violate the hierarchical ordering. The exmaple
+However, the user CANNOT violate the hierarchical ordering. The example
 ```
 SelectParams(Data = Data$TrainData,
              Cat = Data$CatTrain,
