@@ -9,7 +9,7 @@ Description: A package for non-linear binary classification with simultaneous sp
 License: GPL-3
 Imports: Rcpp (>= 0.12.16), MASS, emdbook, fields, stats
 Depends: R (>= 2.10)
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: RcppArmadillo, Rcpp
 RoxygenNote: 6.0.1
 LazyData: true
 NeedsCompilation: yes
